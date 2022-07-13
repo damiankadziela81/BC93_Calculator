@@ -112,7 +112,7 @@ public class Calculator implements ActionListener {
             }
         }
         if (e.getSource()==decButton){
-            textField.setText(textField.getText().concat("."));
+            if(!textField.getText().contains(".")) textField.setText(textField.getText().concat("."));
         }
         if (e.getSource()==addButton){
             num1 = Double.parseDouble(textField.getText());
@@ -164,9 +164,11 @@ public class Calculator implements ActionListener {
             }
         }
         if (e.getSource()==negButton){
-            double temp = Double.parseDouble(textField.getText());
-            temp = temp * (-1);
-            textField.setText(String.valueOf(temp));
+            if(!textField.getText().isEmpty()){
+                double temp = Double.parseDouble(textField.getText());
+                temp = temp * (-1);
+                textField.setText(String.valueOf(temp));
+            }
         }
     }
 }
