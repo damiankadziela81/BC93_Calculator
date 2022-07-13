@@ -7,6 +7,9 @@ public class Calculator implements ActionListener {
 
     JFrame frame;
     JTextField textField;
+    JTextField textFieldNum1;
+    JTextField textFieldNum2;
+    JTextField textFieldPreviousNum2;
     JButton[] numberButtons = new JButton[10];
     JButton[] functionButtons = new JButton[9];
     JButton addButton, subButton, mulButton, divButton, decButton, equButton, clrButton, delButton, negButton;
@@ -14,8 +17,9 @@ public class Calculator implements ActionListener {
 
     Font myFont = new Font("MS Gothic",Font.PLAIN,30);
 
-    double num1=0, num2=0, result=0;
+    double num1=0, num2=0, result=0, previousNum2=0;
     char operator;
+    boolean displayedResult;
 
     Calculator(){
 
@@ -28,6 +32,15 @@ public class Calculator implements ActionListener {
         textField.setBounds(50,25,300,50);
         textField.setFont(myFont);
         textField.setEditable(false); //can't type into text field, it's only for displaying
+
+        textFieldNum1 = new JTextField();
+        textFieldNum1.setBounds(50,550,90,30);
+
+        textFieldNum2 = new JTextField();
+        textFieldNum2.setBounds(155,550,90,30);
+
+        textFieldPreviousNum2 = new JTextField();
+        textFieldPreviousNum2.setBounds(260,550,90,30);
 
         addButton = new JButton("+");
         subButton = new JButton("-");
@@ -94,6 +107,9 @@ public class Calculator implements ActionListener {
         frame.add(delButton);
         frame.add(clrButton);
         frame.add(textField);
+        frame.add(textFieldNum1);
+        frame.add(textFieldNum2);
+        frame.add(textFieldPreviousNum2);
         frame.setVisible(true);
 
     }
@@ -109,6 +125,7 @@ public class Calculator implements ActionListener {
         for (int i=0;i<10;i++){
             if(e.getSource()==numberButtons[i]){
                 textField.setText(textField.getText().concat(String.valueOf(i)));
+                displayedResult=false;
             }
         }
         if (e.getSource()==decButton){
@@ -118,24 +135,33 @@ public class Calculator implements ActionListener {
             num1 = Double.parseDouble(textField.getText());
             operator = '+';
             textField.setText("");
+            textFieldNum1.setText(String.valueOf(num1));
         }
         if (e.getSource()==subButton){
             num1 = Double.parseDouble(textField.getText());
             operator = '-';
             textField.setText("");
+            textFieldNum1.setText(String.valueOf(num1));
         }
         if (e.getSource()==mulButton){
             num1 = Double.parseDouble(textField.getText());
             operator = '*';
             textField.setText("");
+            textFieldNum1.setText(String.valueOf(num1));
         }
         if (e.getSource()==divButton){
             num1 = Double.parseDouble(textField.getText());
             operator = '/';
             textField.setText("");
+            textFieldNum1.setText(String.valueOf(num1));
         }
         if (e.getSource()==equButton){
-            num2 = Double.parseDouble(textField.getText());
+            //user didn't entered second value, we assume we're using same value for both operands
+            if(textField.getText().isEmpty()) num2 = num1;
+            //user didn't entered new value after displaying result - we will be doing same operation as before
+            else if (displayedResult) num2 = previousNum2;
+            //user entered second value
+            else num2 = Double.parseDouble(textField.getText());
             switch (operator) {
                 case '+':
                     result = num1 + num2;
@@ -149,9 +175,15 @@ public class Calculator implements ActionListener {
                 case '/':
                     result = num1 / num2;
                     break;
+                default:
             }
             textField.setText(String.valueOf(result));
+            displayedResult=true;
             num1 = result;
+            previousNum2 = num2;
+            textFieldNum1.setText(String.valueOf(num1));
+            textFieldNum2.setText(String.valueOf(num2));
+            textFieldPreviousNum2.setText(String.valueOf(previousNum2));
         }
         if (e.getSource()==clrButton){
             textField.setText("");
@@ -168,6 +200,8 @@ public class Calculator implements ActionListener {
                 double temp = Double.parseDouble(textField.getText());
                 temp = temp * (-1);
                 textField.setText(String.valueOf(temp));
+                result=temp;
+                operator = ' ';
             }
         }
     }
